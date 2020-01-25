@@ -1,7 +1,7 @@
 #!/bin/sh
 
 ### ホワイトリスト作成
-sudo ipset destroy white_list_japan
+sudo ipset flush white_list_japan
 sudo ipset create white_list_japan hash:net
 cp -p jp.txt jp.txt.bkup
 curl https://ipv4.fetus.jp/jp.txt > jp.txt
@@ -14,7 +14,7 @@ sudo ipset save white_list_japan > white_list_japan.txt
 sudo iptables -I INPUT -m state --state NEW -p tcp --dport 22 -m set --match-set white_list_japan src -j ACCEPT
 ###
 sudo cat << EOF > /etc/ipset.conf
-ipset destroy white_list_japan
+flush white_list_japan
 EOF
 ###
 sudo sh -c 'ipset save >> /etc/ipset.conf'
