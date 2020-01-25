@@ -12,7 +12,12 @@ sudo ipset add white_list_japan 172.16.0.0/12
 sudo ipset list white_list_japan
 sudo ipset save white_list_japan > white_list_japan.txt
 sudo iptables -I INPUT -m state --state NEW -p tcp --dport 22 -m set --match-set white_list_japan src -j ACCEPT
-sudo sh -c 'ipset save > /etc/ipset.conf'
+###
+sudo cat << EOF > /etc/ipset.conf
+ipset destroy white_list_japan
+EOF
+###
+sudo sh -c 'ipset save >> /etc/ipset.conf'
 sudo sh -c 'iptables-save > /etc/iptables.up.rules'
 ### ファイル作成
 sudo cat <<EOF > /etc/network/if-pre-up.d/iptables-with-ipset
@@ -24,7 +29,7 @@ sudo cat <<EOF > /etc/network/if-pre-up.d/iptables-with-ipset
 ### read data from file list
 ipset restore < /etc/ipset.conf
 ### 
-iptables-restore < /etc/iptales.up.rules
+iptables-restore < /etc/iptables.up.rules
 EOF
 ### 実行属性追加
 sudo chmod ug+x /etc/network/if-pre-up.d/iptables-with-ipset
